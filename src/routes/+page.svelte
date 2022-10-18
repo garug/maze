@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { writable } from "svelte/store";
-    import { shuffle } from "lodash";
+    import lodash from "lodash";
     import TreeNode from "../components/TreeNode";
 
     interface CanvasObject {
@@ -315,7 +315,7 @@
         return acc;
     }, new Map());
 
-    $: for (const e of shuffle(edges)) {
+    $: for (const e of lodash.shuffle(edges)) {
         const { x, y } = directions[e.direction];
 
         const neighborKey = `${e.x + x}.${e.y + y}`;
@@ -342,7 +342,7 @@
 
     $: halfSize = size / 2;
 
-    $: finishSquare = shuffle(
+    $: finishSquare = lodash.shuffle(
         grid.filter((square) => {
             const activeLines = getLines(square).filter((line) => line.active);
 
