@@ -58,6 +58,8 @@
 
     let size = 100;
 
+    let color = "#0098fe";
+
     let canvas: HTMLCanvasElement;
 
     let context: CanvasRenderingContext2D;
@@ -83,7 +85,7 @@
         return {
             x,
             y,
-            visited: false,
+            color: "white",
             node: new TreeNode(`${x}${y}`),
         };
     }
@@ -210,7 +212,7 @@
     function renderSquares() {
         grid.forEach((square, i) => {
             context.beginPath();
-            context.fillStyle = square === finishSquare ? "red" : square.visited ? "#0098fe" : "white";
+            context.fillStyle = square === finishSquare ? "red" : square.color;
             context.rect(
                 square.x * SQUARE_SIZE,
                 square.y * SQUARE_SIZE,
@@ -356,7 +358,7 @@
 
     $: (function () {
         const square = mapGrid.get(`${player.x}.${player.y}`);
-        square.visited = true;
+        square.color = color;
     })();
 </script>
 
@@ -367,6 +369,7 @@
         width={canvasSize}
         height={canvasSize}
     />
+    <input type="color" bind:value={color} />
 </div>
 <svelte:window on:resize|passive={handleResize} on:keydown={handleKeydown} />
 
