@@ -83,7 +83,7 @@
         return {
             x,
             y,
-            end: false,
+            visited: false,
             node: new TreeNode(`${x}${y}`),
         };
     }
@@ -210,7 +210,7 @@
     function renderSquares() {
         grid.forEach((square, i) => {
             context.beginPath();
-            context.fillStyle = square === finishSquare ? "red" : "white";
+            context.fillStyle = square === finishSquare ? "red" : square.visited ? "#0098fe" : "white";
             context.rect(
                 square.x * SQUARE_SIZE,
                 square.y * SQUARE_SIZE,
@@ -235,7 +235,7 @@
             false
         );
 
-        context.fillStyle = "#0098fe";
+        context.fillStyle = "white";
         context.fill();
     }
 
@@ -354,9 +354,10 @@
         })
     )[0];
 
-    $: console.log(
-        player.x === finishSquare.x && player.y === finishSquare.y && "vencedor"
-    );
+    $: (function () {
+        const square = mapGrid.get(`${player.x}.${player.y}`);
+        square.visited = true;
+    })();
 </script>
 
 <div class="container">
