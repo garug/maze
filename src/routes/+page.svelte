@@ -20,7 +20,7 @@
         "ArrowLeft",
     ] as const;
 
-    const SQUARE_SIZE = 16;
+    const SQUARE_SIZE = 8;
 
     const directions = {
         norte: {
@@ -56,7 +56,7 @@
         },
     };
 
-    let size = 30;
+    let size = 100;
 
     let canvas: HTMLCanvasElement;
 
