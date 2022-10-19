@@ -68,6 +68,8 @@
 
     let time = 0;
 
+    let visited = new Set();
+
     let width = writable(0);
 
     let height = writable(0);
@@ -264,18 +266,20 @@
         });
     }
 
-    function createLoop(fn: (elapsed: any, dt: any) => void) {
-        let elapsed = 0;
+    function createLoop(fn: (dt: any) => void) {
+        // let elapsed = 0;
         let lastTime = performance.now();
+        const interval = setInterval(() => time++, 1000);
         (function loop() {
             frame = requestAnimationFrame(loop);
             const beginTime = performance.now();
             const dt = (beginTime - lastTime) / 1000;
-            lastTime = beginTime;
-            elapsed += dt;
-            fn(elapsed, dt);
+            // lastTime = beginTime;
+            // elapsed += dt;
+            fn(dt);
         })();
         return () => {
+            clearInterval(interval);
             cancelAnimationFrame(frame);
         };
     }
@@ -285,8 +289,7 @@
         const ctx = canvas.getContext("2d");
         ctx && (context = ctx);
 
-        return createLoop((elapsed, dt) => {
-            time = elapsed;
+        return createLoop((dt) => {
             render(dt);
         });
     });
@@ -357,7 +360,9 @@
     )[0];
 
     $: (function () {
-        const square = mapGrid.get(`${player.x}.${player.y}`);
+        const key = `${player.x}.${player.y}`;
+        const square = mapGrid.get(key);
+        visited = new Set([...visited, key]);
         square.color = color;
     })();
 </script>
@@ -373,6 +378,9 @@
             max="30"
             bind:value={SQUARE_SIZE}
         />
+        <p>
+            Blocks: {visited.size} / {grid.length} Time Elapsed: {time}s
+        </p>
     </div>
     <canvas
         bind:this={canvas}
