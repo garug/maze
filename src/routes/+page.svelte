@@ -20,8 +20,6 @@
         "ArrowLeft",
     ] as const;
 
-    const SQUARE_SIZE = 8;
-
     const directions = {
         norte: {
             x: 0,
@@ -56,7 +54,9 @@
         },
     };
 
-    let size = 100;
+    let size = 30;
+
+    let SQUARE_SIZE = 8;
 
     let color = "#0098fe";
 
@@ -77,7 +77,7 @@
         y: 0,
     };
 
-    function generateEdge(s = size) {
+    function generateEdge(s: number) {
         return Array.from({ length: s }).map((_, i) => i);
     }
 
@@ -293,8 +293,8 @@
 
     $: canvasSize = size * SQUARE_SIZE;
 
-    $: grid = generateEdge()
-        .map((x) => generateEdge().map((y) => generateSquare(x, y)))
+    $: grid = generateEdge(size)
+        .map((x) => generateEdge(size).map((y) => generateSquare(x, y)))
         .flatMap((e) => e);
 
     $: lines = generateEdge(size + 1)
@@ -363,17 +363,31 @@
 </script>
 
 <div class="container">
+    <div class="controls">
+        <input type="color" bind:value={color} />
+        <input type="range" min="6" step="2" max="100" bind:value={size} />
+        <input
+            type="range"
+            min="8"
+            step="2"
+            max="30"
+            bind:value={SQUARE_SIZE}
+        />
+    </div>
     <canvas
         bind:this={canvas}
         class="canvas"
         width={canvasSize}
         height={canvasSize}
     />
-    <input type="color" bind:value={color} />
 </div>
 <svelte:window on:resize|passive={handleResize} on:keydown={handleKeydown} />
 
 <style>
+    .controls {
+        position: fixed;
+        top: 0;
+    }
     .container {
         width: 100vw;
         display: flex;
