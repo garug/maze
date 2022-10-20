@@ -345,19 +345,17 @@
         }
     }
 
-    $: halfSize = size / 2;
+    $: farDistance = Math.ceil(size / 1.3);
 
-    $: finishSquare = lodash.shuffle(
-        grid.filter((square) => {
-            const activeLines = getLines(square).filter((line) => line.active);
+    $: finishSquare = lodash.shuffle(grid).find((square) => {
+        const activeLines = getLines(square).filter((line) => line.active);
 
-            const isClosed = activeLines.length === 3;
+        const isClosed = activeLines.length === 3;
 
-            const farFromStart = square.x >= halfSize || square.y >= halfSize;
+        const farEnough = square.x >= farDistance && square.y >= farDistance;
 
-            return isClosed && farFromStart;
-        })
-    )[0];
+        return isClosed && farEnough;
+    });
 
     $: (function () {
         const key = `${player.x}.${player.y}`;
