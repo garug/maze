@@ -70,6 +70,10 @@
 
     let visited = new Set();
 
+    let timer: NodeJS.Timer;
+
+    let hasWon = false;
+
     let width = writable(0);
 
     let height = writable(0);
@@ -269,7 +273,7 @@
     function createLoop(fn: (dt: any) => void) {
         // let elapsed = 0;
         let lastTime = performance.now();
-        const interval = setInterval(() => time++, 1000);
+        timer = setInterval(() => time++, 1000);
         (function loop() {
             frame = requestAnimationFrame(loop);
             const beginTime = performance.now();
@@ -279,9 +283,14 @@
             fn(dt);
         })();
         return () => {
-            clearInterval(interval);
+            clearInterval(timer);
             cancelAnimationFrame(frame);
         };
+    }
+
+    function handleWin() {
+        clearInterval(timer);
+        hasWon = true;
     }
 
     onMount(() => {
@@ -318,7 +327,7 @@
     $: mapGrid = grid.reduce((acc, e) => {
         acc.set(`${e.x}.${e.y}`, e);
         return acc;
-    }, new Map());
+    }, new Map<string, typeof grid[number]>());
 
     $: for (const e of lodash.shuffle(edges)) {
         const { x, y } = directions[e.direction];
@@ -330,6 +339,8 @@
         const neighbor = mapGrid.get(neighborKey);
 
         const real = mapGrid.get(realKey);
+
+        if (!real || !neighbor) throw Error("Real or Neighbor not found");
 
         if (real.node.root === neighbor.node.root) continue;
 
@@ -361,7 +372,16 @@
         const key = `${player.x}.${player.y}`;
         const square = mapGrid.get(key);
         visited = new Set([...visited, key]);
+
+        if (!square) {
+            throw Error("Player on impossible square");
+        }
+
         square.color = color;
+
+        if (square === finishSquare) {
+            handleWin();
+        }
     })();
 </script>
 
@@ -379,6 +399,9 @@
         <p>
             Blocks: {visited.size} / {grid.length} Time Elapsed: {time}s
         </p>
+        {#if hasWon}
+            <p>Venceu</p>
+        {/if}
     </div>
     <canvas
         bind:this={canvas}
