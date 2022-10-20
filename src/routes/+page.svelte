@@ -305,6 +305,12 @@
 
     $: canvasSize = size * SQUARE_SIZE;
 
+    $: size,
+        (player = {
+            x: 0,
+            y: 0,
+        });
+
     $: grid = generateEdge(size)
         .map((x) => generateEdge(size).map((y) => generateSquare(x, y)))
         .flatMap((e) => e);
